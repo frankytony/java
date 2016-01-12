@@ -1,0 +1,102 @@
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class TestAtomicInteger {
+	static AtomicInteger ai = new AtomicInteger(0);
+	static int i=0;
+	public static void main(String[] args) {
+		testAtomic();
+		testNormal();
+	}
+
+	static void testAtomic(){
+		Thread th1 = new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+			
+			
+				for(int j=0;j<10000;j++){
+					ai.addAndGet(1);
+				}
+				
+			
+			
+			}
+			
+		});
+		
+		Thread th2 = new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+			
+			
+				for(int j=0;j<10000;j++){
+					 ai.addAndGet(1);
+				}
+				
+			}
+			
+		});
+		
+		th1.start();
+		th2.start();
+		
+		try {
+			th1.join();
+			th2.join();
+			System.out.println("atomic ====="+ai.get());
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	
+	//thread1 i===12538
+	//thread2 i===16119
+
+	static void testNormal(){
+		Thread th1 = new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+			
+				for(int j=0;j<10000;j++){
+					i++;
+				}
+				
+			
+			}
+			
+		});
+		
+		Thread th2 = new Thread(new Runnable(){
+
+			@Override
+			public void run() {
+			
+				for(int j=0;j<10000;j++){
+					i++;
+				}
+			
+			}
+			
+		});
+		
+		th1.start();
+		th2.start();
+		
+		try {
+			th1.join();
+			th2.join();
+			System.out.println("thread i===" + i);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+}

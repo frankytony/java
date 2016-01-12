@@ -1,0 +1,32 @@
+  /**
+     * Constructs an empty <tt>HashMap</tt> with the default initial capacity
+     * (16) and the default load factor (0.75).
+     */
+    public HashMap() {
+        this.loadFactor = DEFAULT_LOAD_FACTOR;//DEFAULT_LOAD_FACTOR = 0.75f;
+        threshold = (int)(DEFAULT_INITIAL_CAPACITY * DEFAULT_LOAD_FACTOR);//DEFAULT_INITIAL_CAPACITY = 16;
+        table = new Entry[DEFAULT_INITIAL_CAPACITY];//DEFAULT_INITIAL_CAPACITY = 16;
+        init();
+    }
+    
+       public V put(K key, V value) {
+        if (key == null)
+            return putForNullKey(value);
+        int hash = hash(key.hashCode());//散列
+        int i = indexFor(hash, table.length);
+        //找到数组上面的位置
+        //循环链表找到以前的key 替换，如果没找到， 增加新值
+        for (Entry<K,V> e = table[i]; e != null; e = e.next) {
+            Object k;
+            if (e.hash == hash && ((k = e.key) == key || key.equals(k))) {
+                V oldValue = e.value;
+                e.value = value;
+                e.recordAccess(this);
+                return oldValue;
+            }
+        }
+
+        modCount++;
+        addEntry(hash, key, value, i);
+        return null;
+    }
